@@ -22,6 +22,7 @@ public class Player : MonoBehaviour
     public float jumpScaleX = 0.7f;
     public float animationDuration = 3f;
     public Ease ease = Ease.OutBack;
+    Animator animator;
 
     private void Update()
     {
