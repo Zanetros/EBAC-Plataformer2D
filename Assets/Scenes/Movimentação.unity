@@ -801,10 +801,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MyRigidbody: {fileID: 891210667}
   speed: 5
-  speedRun: 20
+  speedRun: 13
   forceJump: 20
   friction: {x: -0.1, y: 0}
-  jumpScaleY: 1.5
+  jumpScaleY: 1.1
   jumpScaleX: 0.7
   animationDuration: 0.3
   ease: 27

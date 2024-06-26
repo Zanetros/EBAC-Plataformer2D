@@ -24,6 +24,11 @@ public class Player : MonoBehaviour
     public Ease ease = Ease.OutBack;
     Animator animator;
 
+    public void Awake()
+    {
+        animator = GetComponent<Animator>();
+    }
+
     private void Update()
     {
         HandleJump();
@@ -35,20 +40,39 @@ public class Player : MonoBehaviour
         if (Input.GetKey(KeyCode.LeftControl))
         {
             _currentSpeed = speedRun;
+            animator.SetBool("Run", true);
+            animator.speed = 1.25f;
         }
         else
         {
             _currentSpeed = speed;
+            animator.SetBool("Run", false);
+            animator.speed = 1f;
         }
 
         if (Input.GetKey(KeyCode.LeftArrow))
         {
             MyRigidbody.velocity = new Vector2(-_currentSpeed, MyRigidbody.velocity.y);
+            if (MyRigidbody.transform.localScale.x != -1)
+            {
+                MyRigidbody.transform.DOScaleX(-1, 0.1f);
+            }
+            animator.SetBool("Run", true);
         }
 
         else if (Input.GetKey(KeyCode.RightArrow))
         {
             MyRigidbody.velocity = new Vector2(_currentSpeed, MyRigidbody.velocity.y);
+            if (MyRigidbody.transform.localScale.x != 1)
+            {
+                MyRigidbody.transform.DOScaleX(1, 0.1f);
+            }
+            animator.SetBool("Run", true);
+        }
+
+        else
+        {
+            animator.SetBool("Run", false);
         }
         
         if (MyRigidbody.velocity.x > 0)
@@ -64,20 +88,29 @@ public class Player : MonoBehaviour
 
     private void HandleJump()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            MyRigidbody.velocity = Vector2.up * forceJump; 
-            MyRigidbody.transform.localScale = Vector2.one;
-
-            DOTween.Kill(MyRigidbody.transform);
-
-            HandleScaleJump();
-        }          
+        StartCoroutine(JumpDelay());  
     }
 
     private void HandleScaleJump()
     {
         MyRigidbody.transform.DOScaleY(jumpScaleY, animationDuration).SetLoops(2, LoopType.Yoyo).SetEase(ease);
         MyRigidbody.transform.DOScaleX(jumpScaleX, animationDuration).SetLoops(2, LoopType.Yoyo).SetEase(ease);
+    }
+
+    public IEnumerator JumpDelay()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            MyRigidbody.velocity = Vector2.up * forceJump;
+            MyRigidbody.transform.localScale = Vector2.one;
+
+            DOTween.Kill(MyRigidbody.transform);
+            animator.SetBool("Jump", true);
+            HandleScaleJump();
+            yield return new WaitForSeconds(0.4f);
+            animator.SetBool("Jump", false);
+        }
+
+        
     }
 }
